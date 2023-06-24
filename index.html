@@ -1,0 +1,54 @@
+<html>
+  <head>
+      <script src="index.js" type="module" defer></script>
+      <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+      <div class="container text-center">
+          <input type="tel" id="phone" maxlength="16" placeholder="mobile number" autocomplete="off" />
+          <div><label for="phone">(123) 456-7890</label></div>
+      </div>
+      <script>
+        var previousValue = ""
+        var formatNumber = function(e) {
+            let input = e.target;
+            let caretStart = e.target.selectionStart;
+            let isBackspacePressed = previousValue.length > input.value.length
+            const phoneNumber = input.value.replace(/\D/g, "");
+            if (phoneNumber.length === 0) {
+                input.value = "";
+                return;
+            }
+            const formattedPhoneNumber = phoneNumber.replace(
+                /^(\d{3})(\d{0,3})(\d{0,10})$/,
+                function(match, group1, group2, group3) {
+                    let formattedNumber = "";
+                    if (group1 && !group2) {
+                        formattedNumber += `${group1}`;
+                    }
+                    if (group1 && group2) {
+                        formattedNumber += `(${group1})`;
+                    }
+                    if (group2) {
+                        formattedNumber += ` ${group2}`;
+                    }
+                    if (group3) {
+                        formattedNumber += `-${group3}`;
+                    }
+                    return formattedNumber;
+                }
+            );
+            if (formattedPhoneNumber) { 
+                input.value = formattedPhoneNumber
+                previousValue = formattedPhoneNumber
+                if (isBackspacePressed) {
+                    e.target.selectionStart = caretStart;
+                    e.target.selectionEnd = caretStart;
+                }
+            };
+        }
+        document.getElementById('phone').addEventListener('input', e => formatNumber(e));
+        document.getElementById('phone').addEventListener('change', e => formatNumber(e));
+      </script>
+  </body>
+</html>
